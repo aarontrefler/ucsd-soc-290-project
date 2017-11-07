@@ -75,6 +75,9 @@ def extract_data():
 	# Get Trump retweets
 	#get_trump_retweets(n=100)
 
+	# Export MongoDB
+	#os.system('mongodump --db twitterdb --gzip --out "../../data"')
+
 	
 if __name__ == '__main__':
 	extract_data()
