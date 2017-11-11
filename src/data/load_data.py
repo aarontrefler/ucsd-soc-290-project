@@ -1,3 +1,6 @@
+"""
+Load MongoDB with Twitter data
+"""
 import json
 import os
 import os.path
@@ -11,16 +14,17 @@ def test_load():
     """
     client = MongoClient()
     db = client.twitterdb
+    
     print("Extracting Trump tweet ...")
     pprint.pprint(db.trump_tweets.find_one())
+    print("Number of collections: {}".format(len(db.collection_names())))
 
 
 def load_data():
     """
     """
+    # Assert currently in correct dir
     assert(os.path.isdir("../../data/twitterdb")), "../../data/twitterdb does not exist"
-
-
 
     # Restore MongoDB
     os.system('mongorestore --drop --db twitterdb --gzip --dir ../../data/twitterdb')
