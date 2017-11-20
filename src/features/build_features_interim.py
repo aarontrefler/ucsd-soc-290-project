@@ -1,4 +1,4 @@
-"""Scripts to turn raw data into features for modeling."""
+"""Scripts to turn raw data into features used for data exploration."""
 import numpy as np
 import os
 import pandas as pd
@@ -6,6 +6,7 @@ import re
 
 from agefromname import AgeFromName, GenerationFromName
 from IPython.core.display import display
+from pathlib import Path
 from pymongo import MongoClient
 from gender_detector.gender_detector import GenderDetector
 
@@ -59,9 +60,15 @@ def infer_age(first_names, genders):
     ages = []
     for i, name in enumerate(first_names):
         if genders[i] == 'male':
-            ages.append(2017 - age_from_name.argmax(name, 'm', 2017))
+            if len(age_from_name.get_estimated_counts(name, 'm', 2017)) == 0:
+                ages.append(np.nan)
+            else:
+                ages.append(2017 - age_from_name.argmax(name, 'm', 2017))
         elif genders[i] == 'female':
-            ages.append(2017 - age_from_name.argmax(name, 'f', 2017))
+            if len(age_from_name.get_estimated_counts(name, 'f', 2017)) == 0:
+                ages.append(np.nan)
+            else:
+                ages.append(2017 - age_from_name.argmax(name, 'f', 2017))
         else:
             ages.append(np.nan)
     return ages
@@ -84,6 +91,18 @@ def infer_user_generation_probs(first_names, genders):
     return pd.DataFrame(data=np.array(generation_probs).squeeze(), columns=generation_list)
 
 
+def get_years_user_exists(creation_date):
+    return np.abs(srs.str.split(expand=True).iloc[:,-1].astype(int) - 2017)
+
+
+def get_source_apple(source):
+    return (srs.str.lower().str.find("iphone") != -1) | (srs.str.lower().str.find("ipad") != -1)
+
+
+def get_source_android(source):
+    return srs.str.lower().str.find("android") != -1
+
+
 def build_interim_featues(verbose=1):
     """TBD."""
     interim_features = ['first_name', 'last_name', 'gender', 'age',
@@ -94,6 +113,9 @@ def build_interim_featues(verbose=1):
     for f in os.listdir('../../data/raw'):
         if verbose > 0:
             print("\tProcessing {}".format(f))
+        if Path("../../data/interim/" + f.split("_")[0] + "_retweet_interim_feats.csv").is_file():
+            continue
+
         df = pd.read_csv('../../data/raw/' + f)
         df['first_name'] = df.user_name.apply(first_name)
         df['last_name'] = df.user_name.apply(last_name)
@@ -115,6 +137,11 @@ def build_interim_featues(verbose=1):
         # Create location features
 
         # Create time since user creation feature
+        df['time_user_exist'] = get_years_user_exists(df.user_created_at)
+
+        # Create features based on "source" of retweet
+        df['is_mobile_apple'] = get_source_apple(df.source)
+        df['is_mobile_android'] = get_source_android(df.source)
 
         # Create features based on user_description
 
