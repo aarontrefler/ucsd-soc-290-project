@@ -48,8 +48,8 @@ def get_trump_tweets(n, api, db):
     """
     Get Trump tweets from his Twitter timeline
     """
-    for counter, tweet in enumerate(limit_handled(
-        tweepy.Cursor(api.user_timeline, id='realDonaldTrump', count=1).items(n))):
+    for counter, tweet in enumerate(limit_handled(tweepy.Cursor(api.user_timeline,
+                                                                id='realDonaldTrump', count=1).items(n))):
         # Check if tweet is already stored in twitterdb
         if check_tweet_stored(tweet=tweet, db=db, collection='trump_tweets'):
             print("Tweet {} already containted in db".format(counter))
@@ -80,10 +80,8 @@ def get_keys():
     Get Twiiter API keys
     """
     keys = {}
-    keys['consumer_key'] = 'W1vEEpGJawjrqeW70yBUkfrWt'
-    keys['consumer_secret'] = 'PSNivPYzJCjvEeQ5WW0zAhAIbAoEdzQBjTUG39up4yhnW9HABi'
-    keys['access_token'] = '289683843-a9GiDa84Ak7FqD8c8Cu1qYzA5oEVqQ1FSKjkSudP'
-    keys['access_secret'] = 'O3KhEusOxqTJGI6zvh8eqlDbyGyUT4tKThymbr57YFHWx'
+    keys['consumer_key'] = 'KoFgLjgRwmWKPDL84GSFMmmbN'
+    keys['consumer_secret'] = 'Zu4BTJHk3h3sKyqWs2fV0eT3PH2FYa1rSQ8DXAXyiVtuorXifi'
     return keys
 
 
