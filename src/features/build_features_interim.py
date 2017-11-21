@@ -92,15 +92,15 @@ def infer_user_generation_probs(first_names, genders):
 
 
 def get_years_user_exists(creation_date):
-    return np.abs(srs.str.split(expand=True).iloc[:,-1].astype(int) - 2017)
+    return np.abs(creation_date.str.split(expand=True).iloc[:,-1].astype(int) - 2017)
 
 
 def get_source_apple(source):
-    return (srs.str.lower().str.find("iphone") != -1) | (srs.str.lower().str.find("ipad") != -1)
+    return (source.str.lower().str.find("iphone") != -1) | (source.str.lower().str.find("ipad") != -1)
 
 
 def get_source_android(source):
-    return srs.str.lower().str.find("android") != -1
+    return source.str.lower().str.find("android") != -1
 
 
 def build_interim_featues(verbose=1):
@@ -108,40 +108,43 @@ def build_interim_featues(verbose=1):
     interim_features = ['first_name', 'last_name', 'gender', 'age',
         'gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ', 'gen_Greatest_prob', 'gen_prob_Mill',
         'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other',
+        'years_user_exist','is_mobile_apple', 'is_mobile_android',
         'user_favourites_count', 'user_followers_count', 'user_friends_count', 'user_lang', 'user_statuses_count']
 
     for f in os.listdir('../../data/raw'):
         if verbose > 0:
             print("\tProcessing {}".format(f))
         if Path("../../data/interim/" + f.split("_")[0] + "_retweet_interim_feats.csv").is_file():
-            continue
+            df = pd.concat([pd.read_csv("../../data/interim/" + f.split("_")[0] + "_retweet_interim_feats.csv"),
+                            pd.read_csv('../../data/raw/' + f)], axis=1)
+        else:
+            df = pd.read_csv('../../data/raw/' + f)
 
-        df = pd.read_csv('../../data/raw/' + f)
-        df['first_name'] = df.user_name.apply(first_name)
-        df['last_name'] = df.user_name.apply(last_name)
-        df['name_is_english'] = df.first_name.apply(is_english)
-
-        # Remove users with names containing non-ASCII characters. Proxy for english names.
-        if verbose > 1:
-            print("Examples where first_name has non-ASCII characters:")
-            print(df.first_name[df['name_is_english'] == False])
-        df = df[df['name_is_english']].copy()
+        if 'first_name' not in df.columns:
+            df['first_name'] = df.user_name.apply(first_name)
+        if 'last_name' not in df.columns:
+            df['last_name'] = df.user_name.apply(last_name)
 
         # Create gender feature
-        df['gender'] = infer_gender(df.first_name)
+        if 'gender' not in df.columns:
+            df['gender'] = infer_gender(df.first_name)
 
         # Create age features
-        df['age'] = infer_age(df.first_name, df.gender)
-        df = pd.concat([df, infer_user_generation_probs(df.first_name, df.gender)], axis=1)
+        if 'age' not in df.columns:
+            df['age'] = infer_age(df.first_name, df.gender)
+            df = pd.concat([df, infer_user_generation_probs(df.first_name, df.gender)], axis=1)
 
         # Create location features
 
         # Create time since user creation feature
-        df['time_user_exist'] = get_years_user_exists(df.user_created_at)
+        if 'years_user_exist' not in df.columns:
+            df['years_user_exist'] = get_years_user_exists(df.user_created_at)
 
         # Create features based on "source" of retweet
-        df['is_mobile_apple'] = get_source_apple(df.source)
-        df['is_mobile_android'] = get_source_android(df.source)
+        if 'is_mobile_apple' not in df.columns:
+            df['is_mobile_apple'] = get_source_apple(df.source)
+        if 'is_mobile_android' not in df.columns:
+            df['is_mobile_android'] = get_source_android(df.source)
 
         # Create features based on user_description
 
