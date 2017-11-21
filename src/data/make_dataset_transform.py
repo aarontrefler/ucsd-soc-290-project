@@ -39,9 +39,16 @@ def create_raw_data(db, retweet_collections):
                 'user_lang': retweet['user']['lang'],
                 'user_location': retweet['user']['location'],
                 'user_name': retweet['user']['name'],
-                'user_statuses_count': retweet['user']['statuses_count']
+                'user_statuses_count': retweet['user']['statuses_count'],
+                'user_id': retweet['user']['screen_name']
             }
             feats_retweets.append(feats)
+            
+        # Save data as csv
+        df = pd.DataFrame(feats_retweets)
+        csv_dir = "../../data/raw/"
+        csv_filename = str(df.trump_tweet_id[0]) + "_retweet_feats.csv"
+        df.to_csv(csv_dir + csv_filename)
 
     # Display summary statistics
     print("Total number of documents: {}".format(np.sum(num_documents)))
@@ -49,8 +56,6 @@ def create_raw_data(db, retweet_collections):
     print("Median number of documents per collection: {}".format(np.median(num_documents)))
     print("Minimum number of documents in a collection: {}".format(np.min(num_documents)))
     print("Maximum number of documents in a collection: {}".format(np.max(num_documents)))
-
-    return pd.DataFrame(feats_retweets)
 
 
 def transform_data():
@@ -62,13 +67,8 @@ def transform_data():
     retweet_collections = db.collection_names(include_system_collections=False)
     retweet_collections.remove('trump_tweets')
 
-    # Extract retweet features for all collected Trump tweets
-    df = create_raw_data(db, retweet_collections)
-
-    # Save data as csv
-    csv_dir = "../../data/interim/"
-    csv_filename = str(df.trump_tweet_id[0]) + "_retweet_feats.csv"
-    df.to_csv(csv_dir + csv_filename)
+    # Extract and save retweet features for all collected Trump tweets
+    create_raw_data(db, retweet_collections)
 
 
 if __name__ == '__main__':
