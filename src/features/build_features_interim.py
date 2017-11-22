@@ -83,9 +83,9 @@ def infer_user_generation_probs(first_names, genders):
     generation_probs = []
     for i, name in enumerate(first_names):
         if genders[i] == 'male':
-            generation_probs.append(gen_from_name.get_estimated_counts(name, 'm', 2017).values.reshape(1,-1))
+            generation_probs.append(gen_from_name.get_estimated_distribution(name, 'm', 2017).values.reshape(1,-1))
         elif genders[i] == 'female':
-            generation_probs.append(gen_from_name.get_estimated_counts(name, 'f', 2017).values.reshape(1,-1))
+            generation_probs.append(gen_from_name.get_estimated_distribution(name, 'f', 2017).values.reshape(1,-1))
         else:
             generation_probs.append(np.ones((1,8)) * np.nan)
     return pd.DataFrame(data=np.array(generation_probs).squeeze(), columns=generation_list)
@@ -132,6 +132,7 @@ def build_interim_featues(verbose=1):
         # Create age features
         if 'age' not in df.columns:
             df['age'] = infer_age(df.first_name, df.gender)
+        if 'gen_prob_BabyBoom' not in df.columns:
             df = pd.concat([df, infer_user_generation_probs(df.first_name, df.gender)], axis=1)
 
         # Create location features
@@ -149,7 +150,7 @@ def build_interim_featues(verbose=1):
         # Create features based on user_description
 
         # Save into interim dataset
-        df = df[interim_features]
+        df = df[interim_features].T.drop_duplicates().T
         df.to_csv('../../data/interim/' + f.split('_')[0] + '_retweet_interim_feats.csv')
 
 
