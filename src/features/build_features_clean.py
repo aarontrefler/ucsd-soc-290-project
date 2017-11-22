@@ -13,13 +13,15 @@ def build_interim_featues(verbose=1):
             continue
         df = pd.read_csv('../../data/raw/' + f)
 
-        # Binarize gender
+        # Process binary features
         df['gender_male'] = df.gender == 'male'
         df['gender_female']= df.gender == 'female'
+        df['is_mobile_apple'] = int(df.is_mobile_apple)
+        df['is_mobile_android'] = int(df.is_mobile_apple)
 
-        # Normalize age
-        
+        # Normalize numeric columns
 
+        # 
 
         #Drop columns not to be used for modelling
         #cols_to_drop = ['first_name', 'last_name', 'gender']
