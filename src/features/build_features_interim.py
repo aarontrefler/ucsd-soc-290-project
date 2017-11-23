@@ -117,6 +117,7 @@ def build_interim_featues(verbose=1):
         if Path("../../data/interim/" + f.split("_")[0] + "_retweet_interim_feats.csv").is_file():
             df = pd.concat([pd.read_csv("../../data/interim/" + f.split("_")[0] + "_retweet_interim_feats.csv"),
                             pd.read_csv('../../data/raw/' + f)], axis=1)
+            df = df[interim_features].T.drop_duplicates().T
         else:
             df = pd.read_csv('../../data/raw/' + f)
 
@@ -136,6 +137,7 @@ def build_interim_featues(verbose=1):
             df = pd.concat([df, infer_user_generation_probs(df.first_name, df.gender)], axis=1)
 
         # Create location features
+        # TBD
 
         # Create time since user creation feature
         if 'years_user_exist' not in df.columns:
@@ -148,9 +150,12 @@ def build_interim_featues(verbose=1):
             df['is_mobile_android'] = get_source_android(df.source)
 
         # Create features based on user_description
+        # TBD
+
+        # Filter examples
+        df = df[df.user_lang == 'en']
 
         # Save into interim dataset
-        df = df[interim_features].T.drop_duplicates().T
         df.to_csv('../../data/interim/' + f.split('_')[0] + '_retweet_interim_feats.csv')
 
 

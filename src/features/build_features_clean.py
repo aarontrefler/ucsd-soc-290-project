@@ -4,30 +4,39 @@ import os
 import pandas as pd
 
 from pathlib import Path
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import Imputer, StandardScaler
 
 
 def normalize_features(df, features):
     # Continuous features
-        scalar = StandardScaler()
-        for feature in continous_features:
-            df[feature] = scalar.fit(df[feature].reshape(-1, 1)).transform(df[feature])
+    scalar = StandardScaler()
+    for feature in features:
+        df[feature] = scalar.fit_transform(df[feature].values.reshape(-1, 1))
+    return df
 
 
-def impute_missing_values():
+def impute_missing_values(df, features):
+    imputer = Imputer()
+    for feature in features:
+        df[feature] = imputer.fit_transform(df[feature].values.reshape(-1, 1))
+    return df
 
 
 def log_transform_features(df, features):
     for feature in features:
-        df[feature] = df[feature].reshape(-1, 1).apply(lambda x: x + 1).apply(np.log10)
+        df[feature] = df[feature].apply(np.log10).replace(-np.inf, np.nan).values.reshape(-1, 1)
     return df
 
 
 def build_clean_featues(verbose=1):
     """Build clean features."""
-    logarithmic_continous_features = ['user_favourites_count', 'user_friends_count', 'user_statuses_count']
-    continous_features = ['age', 'years_user_exist', 'gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ',
-        'gen_Greatest_prob', 'gen_prob_Mill', 'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other']
+    other_features = ['Trump_tweet_id', 'user_id']
+    binary_features = ['gender_male', 'gender_female', 'is_mobile_apple', 'is_mobile_android']
+    continuous_features = ['age', 'years_user_exist']
+    continuous_features_logarithmic = ['user_favourites_count', 'user_friends_count', 'user_statuses_count',
+        'gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ', 'gen_Greatest_prob', 'gen_prob_Mill',
+        'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other']
+    features = other_features + binary_features + continuous_features + continuous_features_logarithmic
 
     df_clean = pd.DataFrame()
     for f in os.listdir('../../data/interim'):
@@ -36,9 +45,6 @@ def build_clean_featues(verbose=1):
         if Path("../../data/interim/" + f.split("_")[0] + "_retweet_clean_feats.csv").is_file():
             continue
         df = pd.read_csv('../../data/interim/' + f)
-
-        # Filter examples
-        df = df[df.user_lang == 'en']
 
         # Process binary features
         df['gender_male'] = df.gender == 'male'
@@ -49,14 +55,13 @@ def build_clean_featues(verbose=1):
         # Create Trump tweet id column
         df['Trump_tweet_id'] = f.split('_')[0]
 
-        # Drop columns not to be used for modelling
-        df = df[continous_features.extend(logarithmic_continous_features.extend(
-        ['Trump_tweet_id', 'user_id', 'gender_male', 'gender_female', 'is_mobile_apple', 'is_mobile_android']))]
-        df_clean.append(df)
+        df = df[features]
+        df_clean = df_clean.append(df)
 
-    df = log_transform_features(df, logarithmic_continous_features)
-    df = impute_missing_values(df)
-    df = normalize_features(df, continous_features.extend(logarithmic_continous_features))
+    df_clean = log_transform_features(df_clean, continuous_features_logarithmic)
+    df_clean = impute_missing_values(df_clean, continuous_features + continuous_features_logarithmic)
+    df_clean = normalize_features(df_clean, continuous_features + continuous_features_logarithmic)
+    df_clean.to_csv("../../data/clean/data_clean.csv")
 
 
 if __name__ == '__main__':
