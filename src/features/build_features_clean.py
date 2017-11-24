@@ -61,7 +61,7 @@ def build_clean_featues(verbose=1):
     df_clean = log_transform_features(df_clean, continuous_features_logarithmic)
     df_clean = impute_missing_values(df_clean, continuous_features + continuous_features_logarithmic)
     df_clean = normalize_features(df_clean, continuous_features + continuous_features_logarithmic)
-    df_clean.to_csv("../../data/clean/data_clean.csv")
+    df_clean.to_csv("../../data/clean/features_clean.csv")
 
 
 if __name__ == '__main__':
