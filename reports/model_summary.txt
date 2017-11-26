@@ -1,38 +1,38 @@
                             OLS Regression Results                            
 ==============================================================================
 Dep. Variable:                  score   R-squared:                       0.001
-Model:                            OLS   Adj. R-squared:                  0.001
-Method:                 Least Squares   F-statistic:                     1.748
-Date:                Fri, 24 Nov 2017   Prob (F-statistic):             0.0358
-Time:                        14:23:45   Log-Likelihood:                -6801.4
-No. Observations:               18825   AIC:                         1.363e+04
-Df Residuals:                   18809   BIC:                         1.376e+04
+Model:                            OLS   Adj. R-squared:                 -0.000
+Method:                 Least Squares   F-statistic:                    0.9309
+Date:                Sun, 26 Nov 2017   Prob (F-statistic):              0.528
+Time:                        09:54:59   Log-Likelihood:                -7708.5
+No. Observations:               20975   AIC:                         1.545e+04
+Df Residuals:                   20959   BIC:                         1.558e+04
 Df Model:                          15                                         
 Covariance Type:            nonrobust                                         
 =========================================================================================
                             coef    std err          t      P>|t|      [0.025      0.975]
 -----------------------------------------------------------------------------------------
-Intercept                 0.1665      0.006     26.035      0.000       0.154       0.179
-gender_male[T.True]      -0.0013      0.006     -0.207      0.836      -0.014       0.011
-gender_female[T.True]     0.0046      0.007      0.702      0.482      -0.008       0.017
-is_mobile_apple          -0.0195      0.007     -2.775      0.006      -0.033      -0.006
-is_mobile_android        -0.0250      0.007     -3.416      0.001      -0.039      -0.011
-years_user_exist         -0.0006      0.003     -0.199      0.842      -0.006       0.005
-user_favourites_count    -0.0011      0.004     -0.266      0.790      -0.009       0.007
-user_friends_count        0.0063      0.003      1.888      0.059      -0.000       0.013
-user_statuses_count      -0.0077      0.005     -1.633      0.103      -0.017       0.002
-gen_prob_BabyBoom         0.0024      0.005      0.501      0.616      -0.007       0.012
-gen_prob_GenX            -0.0008      0.003     -0.240      0.811      -0.007       0.006
-gen_prob_GenZ             0.0102      0.007      1.425      0.154      -0.004       0.024
-gen_Greatest_prob        -0.0048      0.005     -1.035      0.301      -0.014       0.004
-gen_prob_Mill            -0.0023      0.004     -0.561      0.575      -0.010       0.006
-gen_prob_PostGenZ        -0.0035      0.006     -0.551      0.581      -0.016       0.009
-gen_prob_Silent           0.0004      0.006      0.071      0.944      -0.011       0.012
+Intercept                 0.1647      0.006     26.599      0.000       0.153       0.177
+gender_male[T.True]      -0.0042      0.006     -0.702      0.483      -0.016       0.007
+gender_female[T.True]    -0.0008      0.006     -0.122      0.903      -0.013       0.012
+is_mobile_apple          -0.0097      0.007     -1.444      0.149      -0.023       0.003
+is_mobile_android        -0.0118      0.007     -1.678      0.093      -0.025       0.002
+years_user_exist         -0.0031      0.003     -1.190      0.234      -0.008       0.002
+user_favourites_count     0.0024      0.004      0.638      0.523      -0.005       0.010
+user_friends_count        0.0019      0.003      0.594      0.553      -0.004       0.008
+user_statuses_count       0.0022      0.004      0.493      0.622      -0.007       0.011
+gen_prob_BabyBoom         0.0048      0.005      1.050      0.294      -0.004       0.014
+gen_prob_GenX            -0.0016      0.003     -0.495      0.621      -0.008       0.005
+gen_prob_GenZ             0.0042      0.007      0.622      0.534      -0.009       0.018
+gen_Greatest_prob         0.0033      0.004      0.762      0.446      -0.005       0.012
+gen_prob_Mill             0.0035      0.004      0.914      0.361      -0.004       0.011
+gen_prob_PostGenZ        -0.0050      0.006     -0.836      0.403      -0.017       0.007
+gen_prob_Silent          -0.0068      0.006     -1.240      0.215      -0.018       0.004
 ==============================================================================
-Omnibus:                      139.988   Durbin-Watson:                   0.020
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              217.698
-Skew:                          -0.020   Prob(JB):                     5.34e-48
-Kurtosis:                       3.525   Cond. No.                         7.97
+Omnibus:                       95.399   Durbin-Watson:                   0.024
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              108.563
+Skew:                           0.116   Prob(JB):                     2.67e-24
+Kurtosis:                       3.265   Cond. No.                         8.07
 ==============================================================================
 
 Warnings:

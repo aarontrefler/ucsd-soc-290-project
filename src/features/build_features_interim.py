@@ -5,9 +5,7 @@ import pandas as pd
 import re
 
 from agefromname import AgeFromName, GenerationFromName
-from IPython.core.display import display
 from pathlib import Path
-from pymongo import MongoClient
 from gender_detector.gender_detector import GenderDetector
 
 
@@ -77,22 +75,22 @@ def infer_age(first_names, genders):
 def infer_user_generation_probs(first_names, genders):
     """TBD."""
     generation_list = ['gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ', 'gen_Greatest_prob', 'gen_prob_Mill',
-    'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other']
-    
+                       'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other']
+
     gen_from_name = GenerationFromName()
     generation_probs = []
     for i, name in enumerate(first_names):
         if genders[i] == 'male':
-            generation_probs.append(gen_from_name.get_estimated_distribution(name, 'm', 2017).values.reshape(1,-1))
+            generation_probs.append(gen_from_name.get_estimated_distribution(name, 'm', 2017).values.reshape(1, -1))
         elif genders[i] == 'female':
-            generation_probs.append(gen_from_name.get_estimated_distribution(name, 'f', 2017).values.reshape(1,-1))
+            generation_probs.append(gen_from_name.get_estimated_distribution(name, 'f', 2017).values.reshape(1, -1))
         else:
-            generation_probs.append(np.ones((1,8)) * np.nan)
+            generation_probs.append(np.ones((1, 8)) * np.nan)
     return pd.DataFrame(data=np.array(generation_probs).squeeze(), columns=generation_list)
 
 
 def get_years_user_exists(creation_date):
-    return np.abs(creation_date.str.split(expand=True).iloc[:,-1].astype(int) - 2017)
+    return np.abs(creation_date.str.split(expand=True).iloc[:, -1].astype(int) - 2017)
 
 
 def get_source_apple(source):
@@ -105,49 +103,32 @@ def get_source_android(source):
 
 def build_interim_featues(verbose=1):
     """TBD."""
-    interim_features = ['user_id', 'first_name', 'last_name', 'gender', 'age',
-        'gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ', 'gen_Greatest_prob', 'gen_prob_Mill',
-        'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other',
-        'years_user_exist','is_mobile_apple', 'is_mobile_android',
-        'user_favourites_count', 'user_followers_count', 'user_friends_count', 'user_lang', 'user_statuses_count']
-
     for f in os.listdir('../../data/raw'):
         if verbose > 0:
             print("\tProcessing {}".format(f))
         if Path("../../data/interim/" + f.split("_")[0] + "_retweet_interim_feats.csv").is_file():
-            df = pd.concat([pd.read_csv("../../data/interim/" + f.split("_")[0] + "_retweet_interim_feats.csv"),
-                            pd.read_csv('../../data/raw/' + f)], axis=1)
-            df = df[interim_features].T.drop_duplicates().T
-        else:
-            df = pd.read_csv('../../data/raw/' + f)
+            continue
+        df = pd.read_csv('../../data/raw/' + f)
 
-        if 'first_name' not in df.columns:
-            df['first_name'] = df.user_name.apply(first_name)
-        if 'last_name' not in df.columns:
-            df['last_name'] = df.user_name.apply(last_name)
+        df['first_name'] = df.user_name.apply(first_name)
+        df['last_name'] = df.user_name.apply(last_name)
 
         # Create gender feature
-        if 'gender' not in df.columns:
-            df['gender'] = infer_gender(df.first_name)
+        df['gender'] = infer_gender(df.first_name)
 
         # Create age features
-        if 'age' not in df.columns:
-            df['age'] = infer_age(df.first_name, df.gender)
-        if 'gen_prob_BabyBoom' not in df.columns:
-            df = pd.concat([df, infer_user_generation_probs(df.first_name, df.gender)], axis=1)
+        df['age'] = infer_age(df.first_name, df.gender)
+        df = pd.concat([df, infer_user_generation_probs(df.first_name, df.gender)], axis=1)
 
         # Create location features
         # TBD
 
         # Create time since user creation feature
-        if 'years_user_exist' not in df.columns:
-            df['years_user_exist'] = get_years_user_exists(df.user_created_at)
+        df['years_user_exist'] = get_years_user_exists(df.user_created_at)
 
         # Create features based on "source" of retweet
-        if 'is_mobile_apple' not in df.columns:
-            df['is_mobile_apple'] = get_source_apple(df.source)
-        if 'is_mobile_android' not in df.columns:
-            df['is_mobile_android'] = get_source_android(df.source)
+        df['is_mobile_apple'] = get_source_apple(df.source)
+        df['is_mobile_android'] = get_source_android(df.source)
 
         # Create features based on user_description
         # TBD

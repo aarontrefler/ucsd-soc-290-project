@@ -13,12 +13,8 @@ def create_raw_data(db, retweet_collections):
     # Extract retweet features for all collected Trump tweets
     num_documents = []
     for count, collection in enumerate(retweet_collections):
-        # Get number of documents in collection
-        num_documents_retweet = db[retweet_collections[count]].count()
-        num_documents.append(num_documents_retweet)
-
-        print("Processing {retweets} retweets in collection {idx} of {num_collections}...".format(
-            retweets=num_documents_retweet, idx=count + 1, num_collections=num_collections))
+        print("Processing retweets in collection {idx} of {num_collections}...".format(
+            idx=count + 1, num_collections=num_collections))
 
         # Extract retweet features for Trump tweet
         feats_retweets = []
@@ -43,12 +39,16 @@ def create_raw_data(db, retweet_collections):
                 'user_id': retweet['user']['screen_name']
             }
             feats_retweets.append(feats)
-            
+
         # Save data as csv
-        df = pd.DataFrame(feats_retweets)
+        df = pd.DataFrame(feats_retweets).drop_duplicates(subset='user_id')
         csv_dir = "../../data/raw/"
         csv_filename = str(df.trump_tweet_id[0]) + "_retweet_feats.csv"
         df.to_csv(csv_dir + csv_filename)
+
+        # Get number of documents in collection
+        num_documents_retweet = df.shape[0]
+        num_documents.append(num_documents_retweet)
 
     # Display summary statistics
     print("Total number of documents: {}".format(np.sum(num_documents)))
