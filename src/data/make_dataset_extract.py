@@ -69,7 +69,6 @@ def setup_api(keys):
     Setup tweepy API object
     """
     auth = OAuthHandler(keys['consumer_key'], keys['consumer_secret'])
-    auth.set_access_token(keys['access_token'], keys['access_secret'])
     api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
     return api
@@ -106,7 +105,7 @@ def extract_data(n):
 
 if __name__ == '__main__':
     # Set how many trump tweets to process
-    if sys.argv[1]:
+    if len(sys.argv) > 1:
         n = int(sys.argv[1])
     else:
         n = 100

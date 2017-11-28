@@ -30,13 +30,13 @@ def log_transform_features(df, features):
 
 def build_clean_featues(verbose=1):
     """Build clean features."""
-    other_features = ['Trump_tweet_id', 'user_id']
     binary_features = ['gender_male', 'gender_female', 'is_mobile_apple', 'is_mobile_android']
     continuous_features = ['age', 'years_user_exist']
-    continuous_features_logarithmic = ['user_favourites_count', 'user_friends_count', 'user_statuses_count',
-        'gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ', 'gen_Greatest_prob', 'gen_prob_Mill',
-        'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other']
-    features = other_features + binary_features + continuous_features + continuous_features_logarithmic
+    continuous_features_log = ['user_favourites_count', 'user_friends_count', 'user_statuses_count',
+                               'gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ', 'gen_Greatest_prob',
+                               'gen_prob_Mill', 'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other']
+    other_features = ['Trump_tweet_id', 'user_id']
+    features = other_features + binary_features + continuous_features + continuous_features_log
 
     df_clean = pd.DataFrame()
     for f in os.listdir('../../data/interim'):
@@ -58,9 +58,9 @@ def build_clean_featues(verbose=1):
         df = df[features]
         df_clean = df_clean.append(df)
 
-    df_clean = log_transform_features(df_clean, continuous_features_logarithmic)
-    df_clean = impute_missing_values(df_clean, continuous_features + continuous_features_logarithmic)
-    df_clean = normalize_features(df_clean, continuous_features + continuous_features_logarithmic)
+    df_clean = log_transform_features(df_clean, continuous_features_log)
+    df_clean = impute_missing_values(df_clean, continuous_features + continuous_features_log)
+    df_clean = normalize_features(df_clean, continuous_features + continuous_features_log)
     df_clean.to_csv("../../data/clean/features_clean.csv")
 
 
