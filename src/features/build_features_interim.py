@@ -133,9 +133,6 @@ def build_interim_featues(verbose=1):
         # Create features based on user_description
         # TBD
 
-        # Filter examples
-        df = df[df.user_lang == 'en']
-
         # Save into interim dataset
         df.to_csv('../../data/interim/' + f.split('_')[0] + '_retweet_interim_feats.csv')
 

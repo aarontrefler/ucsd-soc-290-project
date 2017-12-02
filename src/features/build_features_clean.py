@@ -42,8 +42,6 @@ def build_clean_featues(verbose=1):
     for f in os.listdir('../../data/interim'):
         if verbose > 0:
             print("\tProcessing {}".format(f))
-        if Path("../../data/interim/" + f.split("_")[0] + "_retweet_clean_feats.csv").is_file():
-            continue
         df = pd.read_csv('../../data/interim/' + f)
 
         # Process binary features
@@ -54,6 +52,10 @@ def build_clean_featues(verbose=1):
 
         # Create Trump tweet id column
         df['Trump_tweet_id'] = f.split('_')[0]
+
+        # Filter examples
+        df = df[df.user_lang == 'en']
+        df = df[df.first_name.str.lower() != 'the']
 
         df = df[features]
         df_clean = df_clean.append(df)
