@@ -33,6 +33,7 @@ def build_clean_featues(verbose=1):
     binary_features = ['gender_male', 'gender_female', 'is_mobile_apple', 'is_mobile_android']
     continuous_features = ['age', 'years_user_exist']
     continuous_features_log = ['user_favourites_count', 'user_friends_count', 'user_statuses_count',
+                               'user_followers_count',
                                'gen_prob_BabyBoom', 'gen_prob_GenX', 'gen_prob_GenZ', 'gen_Greatest_prob',
                                'gen_prob_Mill', 'gen_prob_PostGenZ', 'gen_prob_Silent', 'gen_prob_Other']
     other_features = ['Trump_tweet_id', 'user_id']
