@@ -1,7 +1,12 @@
 ucsd-soc-290-project
 ==============================
 
-Final project for "Theories and Practice of Big Data for Social Scientists" (UCSD Sociology 290)
+Final project for "Theories and Practice of Big Data for Social Scientists" (UCSD Sociology 290)  
+
+At its core, our project aimed to understand what aspects of a political supporter on social media make them more or less hateful. To give this question traction, we specifically chose to investigate what aspects of Trump supporter on Twitter make them more or less hateful. Additionally, we chose to operationalize a supporter’s hatefulness as the amount of negative sentiment contained in the rhetoric of the Trump tweet they chose to re-broadcast (i.e., retweet).  
+
+Project Report: https://drive.google.com/open?id=13KfGAcOPTfvWngOZzbbx-l6A0K5LAtoT  
+Project Presentation: https://drive.google.com/open?id=1C91Bnahgq3OGyy4w9FjkPMeIuTOuikR6zqdeMAjMl5o  
 
 Project Organization
 ------------
